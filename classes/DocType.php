@@ -833,7 +833,7 @@ class DocType extends Smarty
                     }
 
                     $src = $link['src'];
-                    if (!(substr($src, 0, 1) == '/' || substr($src, 0, 7) == 'http://')) {
+                    if (!(substr($src, 0, 1) == '/' || substr($src, 0, 7) == 'http://' || substr($src, 0, 8) == 'https://')) {
                         $src = $smarty->doc_script_url . $src;
                     }
                     $doc_end .= "{$indent}<script";
