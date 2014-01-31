@@ -135,6 +135,11 @@ class DocType extends Smarty
         , 'optional' => array('LEVEL')
         , 'defaults' => array('LEVEL'=>'Transitional')
         )
+    , 'og' => array(
+            'renameto' => 'property'
+        , 'optional' => array('content')
+        , 'defaults' => array('content'=>'')
+        )
     );
     protected $doc_indent = '    ';
     protected $doc_css_url = '';
@@ -687,6 +692,19 @@ class DocType extends Smarty
                             $doc_source .= " {$a}=\"".$this->HTTP_ACCEPT.'; charset='.$this->encoding.'"';
                         }
                         elseif (!empty($v)) {
+                            $doc_source .= " {$a}=\"{$v}\"";
+                        }
+                    }
+                    $doc_source .= " />\n";
+                }
+            }
+
+            // process 'Open Graph' doc info
+            if (isset($_doc_info['og'])) {
+                foreach ($_doc_info['og'] as $meta) {
+                    $doc_source .= "{$indent}<meta";
+                    foreach ($meta as $a=>$v) {
+                        if (!empty($v)) {
                             $doc_source .= " {$a}=\"{$v}\"";
                         }
                     }
