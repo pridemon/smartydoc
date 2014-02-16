@@ -86,8 +86,8 @@ class DocType extends Smarty
         , 'defaults' => array()
         )
     , 'html' => array(
-            'renameto' => 'xml:lang'
-        , 'optional' => array('xmlns', 'dir', 'xml__lang', 'lang', 'version')
+        'renameto' => 'xml:lang'
+        , 'optional' => array('xmlns', 'dir', 'xml__lang', 'lang', 'version','prefix','itemtype','itemscope')
         , 'defaults' => array('xmlns'=>'http://www.w3.org/1999/xhtml')
         )
     , 'head' => array(
@@ -137,6 +137,11 @@ class DocType extends Smarty
         )
     , 'og' => array(
             'renameto' => 'property'
+        , 'optional' => array('content')
+        , 'defaults' => array('content'=>'')
+        )
+    , 'itemprop' => array(
+            'renameto' => 'itemprop'
         , 'optional' => array('content')
         , 'defaults' => array('content'=>'')
         )
@@ -649,7 +654,11 @@ class DocType extends Smarty
                 $doc_source .= '<html';
                 foreach ($_doc_info['html'] as $a=>$v) {
                     if (!empty($v) && ($smarty->doc_info['DOCTYPE']['FAMILY'] === 'XHTML' || $a != 'xmlns')) {
-                        $doc_source .= " {$a}=\"{$v}\"";
+                        if ($a == $v) {
+                            $doc_source .= " {$a}";
+                        } else {
+                            $doc_source .= " {$a}=\"{$v}\"";
+                        }
                     }
                 }
                 $doc_source .= ">\n";
@@ -702,6 +711,19 @@ class DocType extends Smarty
             // process 'Open Graph' doc info
             if (isset($_doc_info['og'])) {
                 foreach ($_doc_info['og'] as $meta) {
+                    $doc_source .= "{$indent}<meta";
+                    foreach ($meta as $a=>$v) {
+                        if (!empty($v)) {
+                            $doc_source .= " {$a}=\"{$v}\"";
+                        }
+                    }
+                    $doc_source .= " />\n";
+                }
+            }
+
+            // process 'Schema.org' doc info
+            if (isset($_doc_info['itemprop'])) {
+                foreach ($_doc_info['itemprop'] as $meta) {
                     $doc_source .= "{$indent}<meta";
                     foreach ($meta as $a=>$v) {
                         if (!empty($v)) {
