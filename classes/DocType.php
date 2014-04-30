@@ -153,7 +153,7 @@ class DocType extends Smarty
     private $doc_info = array();
     private $doc_raw  = array();
     private $doc_modules = array();
-    static $target_choices = array('head', 'body', 'style', 'script');
+    static $target_choices = array('head', 'body', 'style', 'script', 'script_end');
 
     /**
      * CONSTRUCTOR
@@ -920,6 +920,11 @@ class DocType extends Smarty
                 $doc_source .= "\t/*]]>*/</script>\n";
             }
 
+            if (isset($this->doc_raw['script_end'])) {
+                foreach ($this->doc_raw['script_end'] as $raw) {
+                    $doc_end .= $raw."\n";
+                }
+            }
 
             // insert module header-pre content
             $doc_source .= $module_content['head_post'];
