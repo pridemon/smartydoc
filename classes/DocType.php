@@ -86,8 +86,8 @@ class DocType extends Smarty
         , 'defaults' => array()
         )
     , 'html' => array(
-            'renameto' => 'xml:lang'
-        , 'optional' => array('xmlns', 'dir', 'xml__lang', 'lang', 'version')
+        'renameto' => 'xml:lang'
+        , 'optional' => array('xmlns', 'dir', 'xml__lang', 'lang', 'version','prefix','itemtype','itemscope')
         , 'defaults' => array('xmlns'=>'http://www.w3.org/1999/xhtml')
         )
     , 'head' => array(
@@ -140,6 +140,11 @@ class DocType extends Smarty
         , 'optional' => array('content')
         , 'defaults' => array('content'=>'')
         )
+    , 'itemprop' => array(
+            'renameto' => 'itemprop'
+        , 'optional' => array('content')
+        , 'defaults' => array('content'=>'')
+        )
     );
     protected $doc_indent = '    ';
     protected $doc_css_url = '';
@@ -148,7 +153,7 @@ class DocType extends Smarty
     private $doc_info = array();
     private $doc_raw  = array();
     private $doc_modules = array();
-    static $target_choices = array('head', 'body', 'style', 'script');
+    static $target_choices = array('head', 'body', 'style', 'script', 'script_end');
 
     /**
      * CONSTRUCTOR
@@ -649,7 +654,11 @@ class DocType extends Smarty
                 $doc_source .= '<html';
                 foreach ($_doc_info['html'] as $a=>$v) {
                     if (!empty($v) && ($smarty->doc_info['DOCTYPE']['FAMILY'] === 'XHTML' || $a != 'xmlns')) {
-                        $doc_source .= " {$a}=\"{$v}\"";
+                        if ($a == $v) {
+                            $doc_source .= " {$a}";
+                        } else {
+                            $doc_source .= " {$a}=\"{$v}\"";
+                        }
                     }
                 }
                 $doc_source .= ">\n";
@@ -702,6 +711,19 @@ class DocType extends Smarty
             // process 'Open Graph' doc info
             if (isset($_doc_info['og'])) {
                 foreach ($_doc_info['og'] as $meta) {
+                    $doc_source .= "{$indent}<meta";
+                    foreach ($meta as $a=>$v) {
+                        if (!empty($v)) {
+                            $doc_source .= " {$a}=\"{$v}\"";
+                        }
+                    }
+                    $doc_source .= " />\n";
+                }
+            }
+
+            // process 'Schema.org' doc info
+            if (isset($_doc_info['itemprop'])) {
+                foreach ($_doc_info['itemprop'] as $meta) {
                     $doc_source .= "{$indent}<meta";
                     foreach ($meta as $a=>$v) {
                         if (!empty($v)) {
@@ -898,6 +920,11 @@ class DocType extends Smarty
                 $doc_source .= "\t/*]]>*/</script>\n";
             }
 
+            if (isset($this->doc_raw['script_end'])) {
+                foreach ($this->doc_raw['script_end'] as $raw) {
+                    $doc_end .= $raw."\n";
+                }
+            }
 
             // insert module header-pre content
             $doc_source .= $module_content['head_post'];
