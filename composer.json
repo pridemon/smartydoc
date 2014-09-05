@@ -1,5 +1,5 @@
 {
-    "name": "pridemon/smarty",
+    "name": "pridemon/smartydoc",
     "type":        "kohana-module",
     "description": "Smarty DocType add-on module",
     "license":     "BSD-3-Clause",
@@ -13,7 +13,7 @@
 
         {
             "type":"git",
-            "url":"https://github.com/pridemon/Kohana_Smarty3.git"
+            "url":"https://github.com/pridemon/smartydoc.git"
         }
     ],
     "authors": [
